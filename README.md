@@ -1,6 +1,6 @@
-Interactive Graph Algorithm Visualizer
+ Interactive Graph Algorithm Visualizer
 
-An interactive web-based tool to visualize graph algorithms step by step with animations, logs, and data structure representation.
+An interactive web-based tool to visualize graph traversal algorithms with step-by-step animations, logs, and real-time data structure representation.
 
 ---
 
@@ -8,45 +8,74 @@ An interactive web-based tool to visualize graph algorithms step by step with an
 
  Breadth-First Search (BFS)
 
-- Visualizes BFS traversal on a graph
-- Step-by-step animation of node visits
-- Real-time queue (FIFO) visualization
-- Detailed execution logs with timestamps
-- Node states:
-  - Unvisited
-  - In Queue
-  - Processing
-  - Visited
+- Level-by-level traversal
+- Uses Queue (FIFO)
+- Visual queue updates during execution
+
+ Depth-First Search (DFS)
+
+- Explores graph deeply before backtracking
+- Uses Stack (LIFO)
+- Visual stack updates during execution
 
 ---
 
- User Controls
+ Interactive Controls
 
--  Start BFS execution
+-  Start BFS / DFS
 -  Reset graph
--  Visual queue updates dynamically
--  Execution log panel for step tracking
--  Start node selection
--  Speed control for animations
+-  Select start node
+-  Adjust animation speed
+-  Real-time Queue / Stack visualization
+-  Execution logs with timestamps
+
+---
+
+ Visualization Features
+
+- Node states:
+  - Unvisited
+  - In Memory (Queue/Stack)
+  - Processing
+  - Visited
+- Dynamic concept explanation (BFS vs DFS)
+- Smooth animation with adjustable delay
 
 ---
 
  Concepts Covered
 
-- Graph traversal (BFS)
-- Queue (FIFO data structure)
+- Graph traversal algorithms
+- Queue (FIFO)
+- Stack (LIFO)
 - Adjacency list representation
-- Time & Space Complexity:
-  - Time: O(V + E)
-  - Space: O(V)
+
+Complexity
+
+- Time: O(V + E)
+- Space: O(V)
+
+---
+
+ Project Structure
+
+interactive-graph-algorithm-visualizer/
+│── index.html
+│── style.css
+│── script.js
+
+---
+
+ Tech Stack
+
+- HTML
+- CSS
+- JavaScript (Vanilla JS)
+- Canvas API
 
 ---
 
  Planned Features
-
- Graph Traversal
-
-- Depth-First Search (DFS)
 
  Shortest Path Algorithms
 
@@ -60,54 +89,36 @@ An interactive web-based tool to visualize graph algorithms step by step with an
 
  Future Enhancements
 
-- Stack visualization (for DFS)
 - Weighted graph support
-- Interactive graph editing (add/remove nodes & edges)
-- Better UI/UX improvements
-
----
-
- Tech Stack
-
-- HTML
-- CSS
-- JavaScript (Vanilla JS)
-- Canvas API
-
----
-
- Project Structure
-
-interactive-graph-algorithm-visualizer/
-│── index.html
-│── style.css
-│── script.js
+- Step-by-step manual execution (next/prev)
+- Interactive graph editor (add/remove nodes & edges)
+- Highlight shortest paths
+- Better mobile responsiveness
 
 ---
 
  Project Goal
 
-To build a clean and interactive platform for understanding graph algorithms visually, helping students and developers:
+To build a complete and intuitive graph algorithm visualizer for:
 
-- Learn DSA concepts easily
-- Prepare for coding interviews
-- Understand algorithm flow step-by-step
+- Learning DSA concepts
+- Interview preparation
+- Understanding algorithm behavior visually
 
 ---
 
  Current Status
 
- BFS fully working with visualization, queue, and logs
- More algorithms and features in progress
+BFS fully implemented with queue visualization
+DFS fully implemented with stack visualization
+Advanced algorithms in progress
 
 ---
 
  Upcoming Updates
 
-Next updates will include:
-
-- DFS visualization
-- Improved interactivity (speed + start node selection)
-- Additional graph algorithms
+- Dijkstra visualization
+- MST algorithms (Prim & Kruskal)
+- More interactive controls
 
 ---
