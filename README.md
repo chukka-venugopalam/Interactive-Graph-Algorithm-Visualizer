@@ -1,31 +1,48 @@
 Interactive Graph Algorithm Visualizer
 
-An interactive web-based project to visualize graph algorithms step by step.
+An interactive web-based tool to visualize graph algorithms step by step with animations, logs, and data structure representation.
 
 ---
 
- Current Status
-
- Basic graph structure implemented
- Breadth-First Search (BFS) visualization (initial version)
-
-« This project is under active development. More features and algorithms will be added progressively.»
-
----
-
- Implemented Algorithm
+ Current Features
 
  Breadth-First Search (BFS)
 
-- Traverses graph level by level
-- Uses Queue (FIFO)
-- Demonstrates node visiting order visually
+- Visualizes BFS traversal on a graph
+- Step-by-step animation of node visits
+- Real-time queue (FIFO) visualization
+- Detailed execution logs with timestamps
+- Node states:
+  - Unvisited
+  - In Queue
+  - Processing
+  - Visited
+
+---
+
+ User Controls
+
+-  Start BFS execution
+-  Reset graph
+-  Visual queue updates dynamically
+-  Execution log panel for step tracking
+-  Start node selection
+-  Speed control for animations
+
+---
+
+ Concepts Covered
+
+- Graph traversal (BFS)
+- Queue (FIFO data structure)
+- Adjacency list representation
+- Time & Space Complexity:
+  - Time: O(V + E)
+  - Space: O(V)
 
 ---
 
  Planned Features
-
-The following algorithms and improvements are planned:
 
  Graph Traversal
 
@@ -41,13 +58,12 @@ The following algorithms and improvements are planned:
 - Prim’s Algorithm
 - Kruskal’s Algorithm
 
- Additional Improvements
+ Future Enhancements
 
-- Queue / Stack visualization
-- Step-by-step execution logs
-- User interaction (select start node)
-- Speed control for animations
-- Better UI/UX design
+- Stack visualization (for DFS)
+- Weighted graph support
+- Interactive graph editing (add/remove nodes & edges)
+- Better UI/UX improvements
 
 ---
 
@@ -56,52 +72,42 @@ The following algorithms and improvements are planned:
 - HTML
 - CSS
 - JavaScript (Vanilla JS)
-- Canvas API for rendering graphs
+- Canvas API
 
 ---
 
  Project Structure
 
-graph-algorithms/
+interactive-graph-algorithm-visualizer/
 │── index.html
 │── style.css
 │── script.js
 
 ---
 
- Goal of the Project
+ Project Goal
 
-To build a clear and interactive visualization tool for understanding core graph algorithms, useful for:
+To build a clean and interactive platform for understanding graph algorithms visually, helping students and developers:
 
-- Students learning DSA
-- Interview preparation
-- Concept clarity through visual learning
-
----
-
- Future Direction
-
-This project will evolve into a complete graph algorithm visualizer supporting:
-
-- Multiple algorithms
-- Interactive controls
-- Clean UI with detailed explanations
+- Learn DSA concepts easily
+- Prepare for coding interviews
+- Understand algorithm flow step-by-step
 
 ---
 
- Contribution
+ Current Status
 
-This is a personal learning project, but suggestions and improvements are always welcome.
+ BFS fully working with visualization, queue, and logs
+ More algorithms and features in progress
 
 ---
 
- Note
+ Upcoming Updates
 
-This is the initial version with BFS only.
-Upcoming commits will include:
+Next updates will include:
 
-- Enhanced visualization
-- More algorithms
-- Improved interactivity
+- DFS visualization
+- Improved interactivity (speed + start node selection)
+- Additional graph algorithms
 
 ---
