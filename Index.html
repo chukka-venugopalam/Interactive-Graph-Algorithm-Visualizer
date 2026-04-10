@@ -3,254 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFS Graph Visualization</title>
-    <style>
-        :root {
-            --bg-color: #f4f4f9;
-            --text-color: #333;
-            --canvas-bg: #ffffff;
-            --primary: #4CAF50;
-            --primary-hover: #45a049;
-            --danger: #f44336;
-            --danger-hover: #da190b;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-        }
-
-        h1 {
-            margin-bottom: 10px;
-        }
-
-        .controls {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            color: white;
-            transition: background-color 0.3s;
-        }
-
-        #startBtn { background-color: var(--primary); }
-        #startBtn:hover { background-color: var(--primary-hover); }
-        #startBtn:disabled { background-color: #ccc; cursor: not-allowed; }
-
-        #resetBtn { background-color: var(--danger); }
-        #resetBtn:hover { background-color: var(--danger-hover); }
-        #resetBtn:disabled { background-color: #ccc; cursor: not-allowed; }
-
-        canvas {
-            background-color: var(--canvas-bg);
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .legend {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .color-box {
-            width: 15px;
-            height: 15px;
-            border: 1px solid #333;
-            border-radius: 3px;
-        }
-    </style>
+    <title>BFS Graph & Queue Visualization</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Interactive Graph Visualization</h1>
+    <h1>BFS Algorithm Visualization</h1>
     
-    <div class="controls">
-        <button id="startBtn" onclick="runBFS()">Start BFS</button>
-        <button id="resetBtn" onclick="resetGraph()">Reset</button>
-    </div>
-
-    <canvas id="graphCanvas" width="600" height="400"></canvas>
-
-    <div class="legend">
-        <div class="legend-item"><div class="color-box" style="background: #ffffff;"></div> Unvisited</div>
-        <div class="legend-item"><div class="color-box" style="background: #87CEFA;"></div> In Queue</div>
-        <div class="legend-item"><div class="color-box" style="background: #FFA500;"></div> Current Node</div>
-        <div class="legend-item"><div class="color-box" style="background: #32CD32;"></div> Visited</div>
-    </div>
-
-    <script>
-        const canvas = document.getElementById('graphCanvas');
-        const ctx = canvas.getContext('2d');
-        const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
-
-        // Delay function for animation
-        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-        // Define graph structure (a simple tree/graph setup)
-        const initialNodes = [
-            { id: 'A', x: 300, y: 50 },
-            { id: 'B', x: 150, y: 150 },
-            { id: 'C', x: 450, y: 150 },
-            { id: 'D', x: 75,  y: 280 },
-            { id: 'E', x: 225, y: 280 },
-            { id: 'F', x: 375, y: 280 },
-            { id: 'G', x: 525, y: 280 }
-        ];
-
-        // Edges between nodes
-        const edges = [
-            ['A', 'B'], ['A', 'C'], 
-            ['B', 'D'], ['B', 'E'], 
-            ['C', 'F'], ['C', 'G'],
-            ['E', 'F'] // Add a cross edge to make it a general graph, not just a tree
-        ];
-
-        let nodes = [];
-        let isRunning = false;
-
-        // Initialize/Reset the graph state
-        function resetGraph() {
-            // Copy initial nodes and set state to 'unvisited'
-            nodes = initialNodes.map(node => ({ ...node, state: 'unvisited' }));
-            isRunning = false;
-            startBtn.disabled = false;
-            drawGraph();
-        }
-
-        // Get node by ID
-        function getNode(id) {
-            return nodes.find(n => n.id === id);
-        }
-
-        // Draw the entire graph
-        function drawGraph() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Edges
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = '#999';
-            edges.forEach(([id1, id2]) => {
-                const n1 = getNode(id1);
-                const n2 = getNode(id2);
-                ctx.beginPath();
-                ctx.moveTo(n1.x, n1.y);
-                ctx.lineTo(n2.x, n2.y);
-                ctx.stroke();
-            });
-
-            // Draw Nodes
-            nodes.forEach(node => {
-                ctx.beginPath();
-                ctx.arc(node.x, node.y, 25, 0, Math.PI * 2);
-                
-                // Color based on state
-                if (node.state === 'unvisited') {
-                    ctx.fillStyle = '#ffffff';
-                    ctx.strokeStyle = '#333';
-                } else if (node.state === 'queued') {
-                    ctx.fillStyle = '#87CEFA'; // Light Blue
-                    ctx.strokeStyle = '#333';
-                } else if (node.state === 'current') {
-                    ctx.fillStyle = '#FFA500'; // Orange
-                    ctx.strokeStyle = '#333';
-                } else if (node.state === 'visited') {
-                    ctx.fillStyle = '#32CD32'; // Green
-                    ctx.strokeStyle = '#111';
-                }
-
-                ctx.fill();
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                // Draw Text
-                ctx.fillStyle = (node.state === 'unvisited' || node.state === 'queued') ? '#333' : '#fff';
-                ctx.font = 'bold 16px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(node.id, node.x, node.y);
-            });
-        }
-
-        // The core BFS Algorithm with visual steps
-        async function runBFS() {
-            if (isRunning) return;
-            isRunning = true;
-            startBtn.disabled = true;
-            resetBtn.disabled = true; // Prevent resetting while running
-
-            // Build an adjacency list for easy neighbor lookup
-            const adjList = {};
-            nodes.forEach(n => adjList[n.id] = []);
-            edges.forEach(([u, v]) => {
-                adjList[u].push(v);
-                adjList[v].push(u); // Undirected graph
-            });
-
-            const queue = [];
-            const startNode = nodes[0]; // Start at Node 'A'
+    <div class="main-container">
+        
+        <div class="viz-panel">
             
-            queue.push(startNode.id);
-            startNode.state = 'queued';
-            drawGraph();
-            await sleep(800);
+            <div class="settings-bar">
+                <div class="setting-item">
+                    <label for="startNodeSelect"><strong>Start Node:</strong></label>
+                    <select id="startNodeSelect"></select>
+                </div>
+                <div class="setting-item">
+                    <label for="speedControl"><strong>Speed (Delay ms):</strong></label>
+                    <input type="range" id="speedControl" min="200" max="2000" value="1000">
+                </div>
+            </div>
 
-            while (queue.length > 0) {
-                if (!isRunning) break; // Emergency stop if needed
+            <div class="controls">
+                <button id="startBtn" onclick="runBFS()">Start BFS</button>
+                <button id="resetBtn" onclick="resetGraph()">Reset</button>
+            </div>
 
-                const currentId = queue.shift();
-                const currentNode = getNode(currentId);
-                
-                // Mark as current (processing)
-                currentNode.state = 'current';
-                drawGraph();
-                await sleep(800);
+            <div class="queue-wrapper">
+                <h3>Queue Status (FIFO)</h3>
+                <div id="queueContainer" class="queue-container">
+                    <span class="empty-queue-msg">Queue is empty</span>
+                </div>
+            </div>
 
-                // Check all neighbors
-                for (let neighborId of adjList[currentId]) {
-                    const neighborNode = getNode(neighborId);
-                    
-                    if (neighborNode.state === 'unvisited') {
-                        neighborNode.state = 'queued';
-                        queue.push(neighborId);
-                        drawGraph();
-                        await sleep(600);
-                    }
-                }
+            <canvas id="graphCanvas" width="550" height="400"></canvas>
 
-                // Mark current as fully visited
-                currentNode.state = 'visited';
-                drawGraph();
-                await sleep(400);
-            }
+            <div class="legend">
+                <div class="legend-item"><div class="color-box" style="background: #ffffff;"></div> Unvisited</div>
+                <div class="legend-item"><div class="color-box" style="background: #87CEFA;"></div> In Queue</div>
+                <div class="legend-item"><div class="color-box" style="background: #FFA500;"></div> Processing</div>
+                <div class="legend-item"><div class="color-box" style="background: #32CD32;"></div> Visited</div>
+            </div>
+        </div>
 
-            resetBtn.disabled = false;
-        }
+        <div class="info-panel">
+            
+            <div class="card">
+                <h3>Concept & Complexity</h3>
+                <div class="concept-text">
+                    <strong>Breadth-First Search (BFS)</strong> explores a graph layer by layer. It starts at a chosen node, visits all its immediate neighbors, and only then moves on to the neighbors' neighbors. 
+                    <br><br>
+                    It uses a <strong>Queue (First-In-First-Out)</strong> to keep track of which nodes to visit next. Watch the queue update on the left as nodes are pushed and popped!
+                </div>
+                <div class="complexity">
+                    <strong>Time:</strong> O(V + E)<br>
+                    <strong>Space:</strong> O(V)<br>
+                    <small><i>Where V = Vertices (Nodes) and E = Edges.</i></small>
+                </div>
+            </div>
 
-        // Initial draw
-        resetGraph();
-    </script>
+            <div class="card" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+                <h3 style="color: var(--text-color); margin-bottom: 10px;">Execution Log</h3>
+                <div id="logBox" class="log-container">
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
