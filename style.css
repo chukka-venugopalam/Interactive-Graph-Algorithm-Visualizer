@@ -4,6 +4,8 @@
     --canvas-bg: #ffffff;
     --primary: #4CAF50;
     --primary-hover: #45a049;
+    --dfs-color: #9C27B0;
+    --dfs-hover: #7B1FA2;
     --danger: #f44336;
     --danger-hover: #da190b;
 }
@@ -19,9 +21,7 @@ body {
     margin: 0;
 }
 
-h1 {
-    margin-bottom: 20px;
-}
+h1 { margin-bottom: 20px; }
 
 .main-container {
     display: flex;
@@ -32,14 +32,12 @@ h1 {
     justify-content: center;
 }
 
-/* Left Panel: Visualization */
 .viz-panel {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* NEW: Settings Bar Styles */
 .settings-bar {
     display: flex;
     gap: 20px;
@@ -69,11 +67,8 @@ h1 {
     font-weight: bold;
 }
 
-.setting-item input[type=range] {
-    cursor: pointer;
-}
+.setting-item input[type=range] { cursor: pointer; }
 
-/* Controls */
 .controls {
     margin-bottom: 15px;
     display: flex;
@@ -91,16 +86,20 @@ button {
     font-weight: bold;
 }
 
-#startBtn { background-color: var(--primary); }
-#startBtn:hover { background-color: var(--primary-hover); }
-#startBtn:disabled { background-color: #ccc; cursor: not-allowed; }
+#startBfsBtn { background-color: var(--primary); }
+#startBfsBtn:hover { background-color: var(--primary-hover); }
+#startBfsBtn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+#startDfsBtn { background-color: var(--dfs-color); }
+#startDfsBtn:hover { background-color: var(--dfs-hover); }
+#startDfsBtn:disabled { background-color: #ccc; cursor: not-allowed; }
 
 #resetBtn { background-color: var(--danger); }
 #resetBtn:hover { background-color: var(--danger-hover); }
 #resetBtn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-/* Visual Queue Styles */
-.queue-wrapper {
+/* Visual Data Structure (Queue/Stack) Styles */
+.ds-wrapper {
     width: 100%;
     max-width: 550px;
     background: #fff;
@@ -112,14 +111,14 @@ button {
     box-sizing: border-box;
 }
 
-.queue-wrapper h3 {
+.ds-wrapper h3 {
     margin: 0 0 10px 0;
     font-size: 16px;
-    color: var(--primary);
+    color: var(--text-color);
     text-align: center;
 }
 
-.queue-container {
+.ds-container {
     display: flex;
     gap: 10px;
     min-height: 50px;
@@ -131,7 +130,7 @@ button {
     overflow-x: auto;
 }
 
-.queue-item {
+.ds-item {
     background-color: #87CEFA;
     color: #333;
     font-weight: bold;
@@ -142,7 +141,7 @@ button {
     animation: popIn 0.3s ease-out;
 }
 
-.empty-queue-msg {
+.empty-ds-msg {
     color: #888;
     font-style: italic;
     margin: 0 auto;
@@ -180,7 +179,7 @@ canvas {
     border-radius: 3px;
 }
 
-/* Right Panel: Info and Logs */
+/* Info Panel */
 .info-panel {
     flex: 1;
     min-width: 300px;
@@ -200,7 +199,7 @@ canvas {
 
 .card h3 {
     margin-top: 0;
-    color: var(--primary);
+    color: var(--text-color);
     border-bottom: 2px solid #eee;
     padding-bottom: 5px;
 }
@@ -238,7 +237,5 @@ canvas {
     padding-bottom: 4px;
 }
 
-.log-entry:last-child {
-    border-bottom: none;
-}
-
+.log-entry:last-child { border-bottom: none; }
+    
