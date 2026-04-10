@@ -1,17 +1,18 @@
 const canvas = document.getElementById('graphCanvas');
 const ctx = canvas.getContext('2d');
-const startBtn = document.getElementById('startBtn');
+const startBfsBtn = document.getElementById('startBfsBtn');
+const startDfsBtn = document.getElementById('startDfsBtn');
 const resetBtn = document.getElementById('resetBtn');
 const logBox = document.getElementById('logBox');
-const queueContainer = document.getElementById('queueContainer');
+const dsContainer = document.getElementById('dsContainer');
+const dsTitle = document.getElementById('dsTitle');
+const conceptTitle = document.getElementById('conceptTitle');
+const conceptDesc = document.getElementById('conceptDesc');
 
-// New elements for the features
 const startNodeSelect = document.getElementById('startNodeSelect');
 const speedControl = document.getElementById('speedControl');
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Helper function to get current speed from the slider
 const getSpeed = () => parseInt(speedControl.value, 10);
 
 const initialNodes = [
@@ -34,7 +35,6 @@ const edges = [
 let nodes = [];
 let isRunning = false;
 
-// Populate the dropdown menu once when the script loads
 function setupDropdown() {
     startNodeSelect.innerHTML = '';
     initialNodes.forEach(node => {
@@ -43,6 +43,22 @@ function setupDropdown() {
         option.textContent = node.id;
         startNodeSelect.appendChild(option);
     });
+}
+
+function updateConceptText(algo) {
+    if (algo === 'BFS') {
+        conceptTitle.innerHTML = 'Breadth-First Search (BFS)';
+        conceptTitle.style.color = 'var(--primary)';
+        conceptDesc.innerHTML = `<strong>BFS</strong> explores a graph layer by layer. It uses a <strong>Queue (First-In-First-Out)</strong>. Notice how it visits all immediate neighbors first before going deeper.`;
+        dsTitle.innerHTML = 'Queue Status (FIFO - First In, First Out)';
+        dsTitle.style.color = 'var(--primary)';
+    } else if (algo === 'DFS') {
+        conceptTitle.innerHTML = 'Depth-First Search (DFS)';
+        conceptTitle.style.color = 'var(--dfs-color)';
+        conceptDesc.innerHTML = `<strong>DFS</strong> plunges as deep as possible into a graph before backtracking. It uses a <strong>Stack (Last-In-First-Out)</strong>. Notice how it chases a single path all the way to the end!`;
+        dsTitle.innerHTML = 'Stack Status (LIFO - Last In, First Out)';
+        dsTitle.style.color = 'var(--dfs-color)';
+    }
 }
 
 function logMessage(msg) {
@@ -54,29 +70,35 @@ function logMessage(msg) {
     logBox.scrollTop = logBox.scrollHeight;
 }
 
-function renderQueueVisual(queueArray) {
-    queueContainer.innerHTML = ''; 
+function renderDataStructureVisual(array, type = 'Queue') {
+    dsContainer.innerHTML = ''; 
     
-    if (queueArray.length === 0) {
-        queueContainer.innerHTML = '<span class="empty-queue-msg">Queue is empty</span>';
+    if (array.length === 0) {
+        dsContainer.innerHTML = `<span class="empty-ds-msg">${type} is empty</span>`;
         return;
     }
 
-    queueArray.forEach(nodeId => {
+    array.forEach(nodeId => {
         const item = document.createElement('div');
-        item.className = 'queue-item';
+        item.className = 'ds-item';
         item.textContent = nodeId;
-        queueContainer.appendChild(item);
+        dsContainer.appendChild(item);
     });
 }
 
 function resetGraph() {
     nodes = initialNodes.map(node => ({ ...node, state: 'unvisited' }));
     isRunning = false;
-    startBtn.disabled = false;
-    startNodeSelect.disabled = false; // Allow changing start node again
+    startBfsBtn.disabled = false;
+    startDfsBtn.disabled = false;
+    startNodeSelect.disabled = false;
     logBox.innerHTML = ''; 
-    renderQueueVisual([]); 
+    dsTitle.innerHTML = 'Data Structure Status';
+    dsTitle.style.color = 'var(--text-color)';
+    conceptTitle.innerHTML = 'Algorithm Concept';
+    conceptTitle.style.color = 'var(--text-color)';
+    conceptDesc.innerHTML = `Select <strong>Start BFS</strong> or <strong>Start DFS</strong> to see how they explore the graph differently!`;
+    renderDataStructureVisual([], 'Data Structure'); 
     logMessage('Graph initialized. Ready to start.');
     drawGraph();
 }
@@ -129,47 +151,53 @@ function drawGraph() {
     });
 }
 
-async function runBFS() {
-    if (isRunning) return;
+function lockControls() {
     isRunning = true;
-    startBtn.disabled = true;
+    startBfsBtn.disabled = true;
+    startDfsBtn.disabled = true;
     resetBtn.disabled = true; 
-    startNodeSelect.disabled = true; // Lock dropdown while running
+    startNodeSelect.disabled = true; 
     logBox.innerHTML = '';
+}
 
+function buildAdjacencyList() {
     const adjList = {};
     nodes.forEach(n => adjList[n.id] = []);
     edges.forEach(([u, v]) => {
         adjList[u].push(v);
         adjList[v].push(u);
     });
+    return adjList;
+}
 
+// ---------------- BFS LOGIC (FIFO Queue) ----------------
+async function runBFS() {
+    if (isRunning) return;
+    lockControls();
+    updateConceptText('BFS');
+
+    const adjList = buildAdjacencyList();
     const queue = [];
-    
-    // CHANGE 1: Get the starting node from the dropdown
-    const selectedId = startNodeSelect.value;
-    const startNode = getNode(selectedId); 
+    const startNode = getNode(startNodeSelect.value); 
     
     logMessage(`<b>Start:</b> Pushing Node ${startNode.id} to Queue.`);
-    
     queue.push(startNode.id);
-    renderQueueVisual(queue);
+    renderDataStructureVisual(queue, 'Queue');
     
     startNode.state = 'queued';
     drawGraph();
-    
-    // CHANGE 2: Use getSpeed() for dynamic animation speed
     await sleep(getSpeed());
 
     while (queue.length > 0) {
         if (!isRunning) break; 
 
+        // FIFO: Take from the FRONT of the array
         const currentId = queue.shift();
-        renderQueueVisual(queue);
+        renderDataStructureVisual(queue, 'Queue');
 
         const currentNode = getNode(currentId);
         
-        logMessage(`<b>Dequeue:</b> Node ${currentId} popped from Queue to be processed.`);
+        logMessage(`<b>Dequeue:</b> Node ${currentId} shifted from Queue to be processed.`);
         currentNode.state = 'current';
         drawGraph();
         await sleep(getSpeed());
@@ -185,18 +213,13 @@ async function runBFS() {
                 neighborNode.state = 'queued';
                 
                 queue.push(neighborId);
-                renderQueueVisual(queue);
-                
+                renderDataStructureVisual(queue, 'Queue');
                 drawGraph();
-                
-                // Adjusting speed slightly for sub-steps so it doesn't take forever
                 await sleep(getSpeed() * 0.8);
             }
         }
 
-        if(!foundNeighbors) {
-            logMessage(`↳ No unvisited neighbors for Node ${currentId}.`);
-        }
+        if(!foundNeighbors) logMessage(`↳ No unvisited neighbors for Node ${currentId}.`);
 
         logMessage(`<b>Complete:</b> Node ${currentId} is fully visited.`);
         currentNode.state = 'visited';
@@ -208,7 +231,70 @@ async function runBFS() {
     resetBtn.disabled = false;
 }
 
+// ---------------- DFS LOGIC (LIFO Stack) ----------------
+async function runDFS() {
+    if (isRunning) return;
+    lockControls();
+    updateConceptText('DFS');
+
+    const adjList = buildAdjacencyList();
+    const stack = [];
+    const startNode = getNode(startNodeSelect.value); 
+    
+    logMessage(`<b>Start:</b> Pushing Node ${startNode.id} to Stack.`);
+    stack.push(startNode.id);
+    renderDataStructureVisual(stack, 'Stack');
+    
+    startNode.state = 'queued';
+    drawGraph();
+    await sleep(getSpeed());
+
+    while (stack.length > 0) {
+        if (!isRunning) break; 
+
+        // LIFO: Take from the END of the array
+        const currentId = stack.pop();
+        renderDataStructureVisual(stack, 'Stack');
+
+        const currentNode = getNode(currentId);
+        
+        logMessage(`<b>Pop:</b> Node ${currentId} popped from Stack to be processed.`);
+        currentNode.state = 'current';
+        drawGraph();
+        await sleep(getSpeed());
+
+        let foundNeighbors = false;
+
+        // We reverse the neighbors array so that the visual traversal goes left-to-right (alphabetical)
+        const neighbors = [...adjList[currentId]].reverse();
+
+        for (let neighborId of neighbors) {
+            const neighborNode = getNode(neighborId);
+            
+            if (neighborNode.state === 'unvisited') {
+                foundNeighbors = true;
+                logMessage(`↳ Found unvisited neighbor ${neighborId}. Pushing to Stack.`);
+                neighborNode.state = 'queued';
+                
+                stack.push(neighborId);
+                renderDataStructureVisual(stack, 'Stack');
+                drawGraph();
+                await sleep(getSpeed() * 0.8);
+            }
+        }
+
+        if(!foundNeighbors) logMessage(`↳ No unvisited neighbors for Node ${currentId}.`);
+
+        logMessage(`<b>Complete:</b> Node ${currentId} is fully visited.`);
+        currentNode.state = 'visited';
+        drawGraph();
+        await sleep(getSpeed() * 0.8);
+    }
+
+    logMessage('<b>Finished:</b> DFS Algorithm has completed!');
+    resetBtn.disabled = false;
+}
+
 // Initialize things when the page loads
 setupDropdown();
 resetGraph();
-
