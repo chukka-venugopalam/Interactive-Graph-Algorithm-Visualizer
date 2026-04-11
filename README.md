@@ -1,124 +1,143 @@
- Interactive Graph Algorithm Visualizer
+# Graph Traversal & Pathfinding Visualizer
 
-An interactive web-based tool to visualize graph traversal algorithms with step-by-step animations, logs, and real-time data structure representation.
-
----
-
- Current Features
-
- Breadth-First Search (BFS)
-
-- Level-by-level traversal
-- Uses Queue (FIFO)
-- Visual queue updates during execution
-
- Depth-First Search (DFS)
-
-- Explores graph deeply before backtracking
-- Uses Stack (LIFO)
-- Visual stack updates during execution
+An interactive web-based visualizer to understand core graph algorithms used in GATE and technical interviews.
 
 ---
 
- Interactive Controls
+##  Features
 
--  Start BFS / DFS
--  Reset graph
--  Select start node
--  Adjust animation speed
--  Real-time Queue / Stack visualization
--  Execution logs with timestamps
-
----
-
- Visualization Features
-
-- Node states:
-  - Unvisited
-  - In Memory (Queue/Stack)
-  - Processing
-  - Visited
-- Dynamic concept explanation (BFS vs DFS)
-- Smooth animation with adjustable delay
+- Visual representation of graph traversal and shortest path algorithms
+- Step-by-step execution with animation
+- Adjustable speed control
+- Execution logs for better understanding
+- Data structure visualization (Queue, Stack, Priority Queue, Matrix)
 
 ---
 
- Concepts Covered
+##  Supported Algorithms
 
-- Graph traversal algorithms
-- Queue (FIFO)
-- Stack (LIFO)
-- Adjacency list representation
-
-Complexity
-
-- Time: O(V + E)
-- Space: O(V)
+✔ BFS (Breadth-First Search)  
+✔ DFS (Depth-First Search)  
+✔ Dijkstra (Single Source Shortest Path)  
+✔ Floyd-Warshall (All Pairs Shortest Path)
 
 ---
 
- Project Structure
+##  Algorithms Overview
 
-interactive-graph-algorithm-visualizer/
-│── index.html
-│── style.css
-│── script.js
+###  BFS (Breadth-First Search)
+- Explores graph level by level
+- Uses **Queue (FIFO)**
+
+**Time Complexity:** O(V + E)  
+**Space Complexity:** O(V)
 
 ---
 
- Tech Stack
+###  DFS (Depth-First Search)
+- Explores graph depth-wise
+- Uses **Stack (LIFO)**
+
+**Time Complexity:** O(V + E)  
+**Space Complexity:** O(V)
+
+---
+
+###  Dijkstra’s Algorithm
+- Finds shortest path from a **single source node**
+- Uses **Greedy approach + Priority Queue**
+- Works only with **non-negative weights**
+
+#### Features
+- Real-time distance updates
+- Priority queue visualization
+- Path tracking using parent nodes
+
+**Time Complexity:** O((V + E) log V)  
+**Space Complexity:** O(V)
+
+---
+
+###  Floyd-Warshall Algorithm
+- Finds shortest paths between **all pairs of nodes**
+- Uses **Dynamic Programming (Matrix-based approach)**
+
+#### Features
+- Live distance matrix visualization
+- Step-by-step updates using intermediate node `k`
+- Highlights:
+  - Source node (i)
+  - Destination node (j)
+  - Intermediate node (k)
+
+**Time Complexity:** O(V³)  
+**Space Complexity:** O(V²)
+
+---
+
+## Key Differences
+
+| Algorithm        | Type                | Use Case                      |
+|-----------------|---------------------|-------------------------------|
+| BFS             | Traversal           | Level-wise exploration        |
+| DFS             | Traversal           | Deep exploration              |
+| Dijkstra        | Greedy              | Single source shortest path   |
+| Floyd-Warshall  | Dynamic Programming | All pairs shortest paths      |
+
+---
+
+##  Tech Stack
 
 - HTML
 - CSS
-- JavaScript (Vanilla JS)
-- Canvas API
+- JavaScript (Canvas API)
 
 ---
 
- Planned Features
+##  How to Use
 
- Shortest Path Algorithms
-
-- Dijkstra’s Algorithm
-- Floyd-Warshall Algorithm
-
- Minimum Spanning Tree (MST)
-
-- Prim’s Algorithm
-- Kruskal’s Algorithm
-
- Future Enhancements
-
-- Weighted graph support
-- Step-by-step manual execution (next/prev)
-- Interactive graph editor (add/remove nodes & edges)
-- Highlight shortest paths
-- Better mobile responsiveness
+1. Select a **Start Node**
+2. Adjust **Speed**
+3. Click on any algorithm:
+   - BFS
+   - DFS
+   - Dijkstra
+   - Floyd-Warshall
+4. Watch:
+   - Graph traversal
+   - Data structure updates
+   - Execution logs
+   - Final results
 
 ---
 
- Project Goal
+##  Learning Purpose
 
-To build a complete and intuitive graph algorithm visualizer for:
-
-- Learning DSA concepts
-- Interview preparation
-- Understanding algorithm behavior visually
-
----
-
- Current Status
-
-BFS fully implemented with queue visualization
-DFS fully implemented with stack visualization
-Advanced algorithms in progress
+This project is built to:
+- Strengthen understanding of **graph algorithms**
+- Prepare for **GATE and coding interviews**
+- Visualize abstract concepts in an intuitive way
 
 ---
 
- Upcoming Updates
+##  Limitations
 
-- Dijkstra visualization
-- MST algorithms (Prim & Kruskal)
-- More interactive controls
+- Dijkstra does not support negative edge weights
+- Graph is predefined (no custom input yet)
 
 ---
+
+##  Future Improvements
+
+- Add Bellman-Ford algorithm (negative weights)
+- Add A* pathfinding
+- Allow user-defined graphs
+- Path reconstruction visualization
+- Mobile UI improvements
+
+---
+
+
+##  Author
+
+Built as part of DSA and GATE preparation.
