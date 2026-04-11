@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph Traversal Visualization</title>
+    <title>Graph Traversal & Pathfinding Visualization</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,14 +20,16 @@
                     <select id="startNodeSelect"></select>
                 </div>
                 <div class="setting-item">
-                    <label for="speedControl"><strong>Speed (Delay ms):</strong></label>
-                    <input type="range" id="speedControl" min="200" max="2000" value="1000">
+                    <label for="speedControl"><strong>Speed:</strong></label>
+                    <input type="range" id="speedControl" min="10" max="2000" value="500">
                 </div>
             </div>
 
             <div class="controls">
-                <button id="startBfsBtn" onclick="runBFS()">Start BFS</button>
-                <button id="startDfsBtn" onclick="runDFS()">Start DFS</button>
+                <button id="startBfsBtn" onclick="runBFS()">BFS</button>
+                <button id="startDfsBtn" onclick="runDFS()">DFS</button>
+                <button id="startDijkstraBtn" onclick="runDijkstra()">Dijkstra</button>
+                <button id="startFloydBtn" onclick="runFloydWarshall()">Floyd-Warshall</button>
                 <button id="resetBtn" onclick="resetGraph()">Reset</button>
             </div>
 
@@ -40,7 +42,7 @@
 
             <canvas id="graphCanvas" width="550" height="400"></canvas>
 
-            <div class="legend">
+            <div class="legend" id="dynamicLegend">
                 <div class="legend-item"><div class="color-box" style="background: #ffffff;"></div> Unvisited</div>
                 <div class="legend-item"><div class="color-box" style="background: #87CEFA;"></div> In Memory</div>
                 <div class="legend-item"><div class="color-box" style="background: #FFA500;"></div> Processing</div>
@@ -53,9 +55,9 @@
             <div class="card">
                 <h3 id="conceptTitle">Algorithm Concept</h3>
                 <div id="conceptDesc" class="concept-text">
-                    Select <strong>Start BFS</strong> or <strong>Start DFS</strong> to see how they explore the graph differently!
+                    Select an algorithm to see how it explores the graph differently!
                 </div>
-                <div class="complexity">
+                <div class="complexity" id="complexityBox">
                     <strong>Time:</strong> O(V + E)<br>
                     <strong>Space:</strong> O(V)<br>
                     <small><i>Where V = Vertices (Nodes) and E = Edges.</i></small>
@@ -64,11 +66,15 @@
 
             <div class="card" style="padding: 0; background: transparent; border: none; box-shadow: none;">
                 <h3 style="color: var(--text-color); margin-bottom: 10px;">Execution Log</h3>
-                <div id="logBox" class="log-container">
-                    </div>
+                <div id="logBox" class="log-container"></div>
             </div>
 
         </div>
+    </div>
+
+    <div class="results-wrapper" id="resultsWrapper">
+        <h3 id="resultsTitle">Final Results</h3>
+        <div id="resultsContent" class="results-content"></div>
     </div>
 
     <script src="script.js"></script>
