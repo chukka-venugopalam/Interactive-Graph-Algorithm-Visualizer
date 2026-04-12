@@ -5,6 +5,7 @@ const startDfsBtn = document.getElementById('startDfsBtn');
 const startDijkstraBtn = document.getElementById('startDijkstraBtn');
 const startFloydBtn = document.getElementById('startFloydBtn');
 const startPrimsBtn = document.getElementById('startPrimsBtn');
+const startKruskalBtn = document.getElementById('startKruskalBtn');
 const resetBtn = document.getElementById('resetBtn');
 const logBox = document.getElementById('logBox');
 const dsContainer = document.getElementById('dsContainer');
@@ -97,11 +98,19 @@ function updateConceptText(algo) {
     } else if (algo === 'Prims') {
         conceptTitle.innerHTML = "Prim's Algorithm (MST)";
         conceptTitle.style.color = 'var(--prims-color)';
-        conceptDesc.innerHTML = `<strong>Prim's Algorithm</strong> finds the <strong>Minimum Spanning Tree (MST)</strong>. It greedily expands by picking the cheapest available edge connecting the growing tree to a new node.`;
+        conceptDesc.innerHTML = `<strong>Prim's Algorithm</strong> finds the <strong>Minimum Spanning Tree (MST)</strong>. It greedily expands by picking the cheapest edge connecting the growing tree to a new node.`;
         dsTitle.innerHTML = 'Priority Queue Status (Min Edge Weight)';
         dsTitle.style.color = 'var(--prims-color)';
         complexityBox.style.borderLeftColor = 'var(--prims-color)';
         complexityBox.innerHTML = `<strong>Time:</strong> O((V + E) log V)<br><strong>Space:</strong> O(V)`;
+    } else if (algo === 'Kruskal') {
+        conceptTitle.innerHTML = "Kruskal's Algorithm (MST)";
+        conceptTitle.style.color = 'var(--kruskal-color)';
+        conceptDesc.innerHTML = `<strong>Kruskal's Algorithm</strong> finds the <strong>Minimum Spanning Tree (MST)</strong>. It ignores the start node, sorts ALL edges globally by weight, and picks them one-by-one as long as they don't form a cycle using a <strong>Disjoint Set (Union-Find)</strong>!`;
+        dsTitle.innerHTML = 'Globally Sorted Edge List (Smallest First)';
+        dsTitle.style.color = 'var(--kruskal-color)';
+        complexityBox.style.borderLeftColor = 'var(--kruskal-color)';
+        complexityBox.innerHTML = `<strong>Time:</strong> O(E log E)<br><strong>Space:</strong> O(V + E)`;
     }
 }
 
@@ -154,13 +163,15 @@ function renderMatrixVisual(matrix, activeI = -1, activeJ = -1, updated = false)
 }
 
 function resetGraph() {
-    nodes = initialNodes.map(node => ({ ...node, state: 'unvisited', distance: Infinity, parent: null }));
+    // Added mstLinks for Kruskal's visualization
+    nodes = initialNodes.map(node => ({ ...node, state: 'unvisited', distance: Infinity, parent: null, mstLinks: [] }));
     isRunning = false;
     startBfsBtn.disabled = false;
     startDfsBtn.disabled = false;
     startDijkstraBtn.disabled = false;
     startFloydBtn.disabled = false;
     startPrimsBtn.disabled = false;
+    startKruskalBtn.disabled = false;
     startNodeSelect.disabled = false;
     logBox.innerHTML = ''; 
     
@@ -194,7 +205,10 @@ function drawGraph() {
     edges.forEach(([id1, id2, weight]) => {
         const n1 = getNode(id1);
         const n2 = getNode(id2);
-        const isPathEdge = (n1.parent === n2.id) || (n2.parent === n1.id);
+        
+        // Checks normal parent mapping (BFS, DFS, Dijkstra, Prim) AND mstLinks (Kruskal)
+        const isPathEdge = (n1.parent === n2.id) || (n2.parent === n1.id) || 
+                           (n1.mstLinks.includes(n2.id)) || (n2.mstLinks.includes(n1.id));
         
         ctx.beginPath();
         ctx.moveTo(n1.x, n1.y);
@@ -252,6 +266,7 @@ function lockControls() {
     startDijkstraBtn.disabled = true;
     startFloydBtn.disabled = true;
     startPrimsBtn.disabled = true;
+    startKruskalBtn.disabled = true;
     resetBtn.disabled = true; 
     startNodeSelect.disabled = true; 
     logBox.innerHTML = '';
@@ -373,7 +388,7 @@ async function runFloydWarshall() {
                     dist[i][j] = newPath;
                     nodes.forEach(n => n.state = 'unvisited'); nodes[i].state = 'current'; nodes[j].state = 'queued'; nodes[k].state = 'via';
                     logMessage(`↳ <b>Update:</b> ${nodes[i].id} → ${nodes[j].id} via ${nodes[k].id} is shorter! (New Dist: ${newPath})`);
-                    renderMatrixVisual(dist, i, j, true); drawGraph(); await sleep(Math.max(300, getSpeed())); 
+                    renderMatrixVisual(dist, i, j,                    true); drawGraph(); await sleep(Math.max(300, getSpeed())); 
                 } else {
                     renderMatrixVisual(dist, i, j, false); await sleep(Math.min(10, getSpeed() / 10)); 
                 }
@@ -395,7 +410,7 @@ async function runPrims() {
     updateConceptText('Prims');
 
     const adjList = buildAdjacencyList();
-        const startId = startNodeSelect.value;
+    const startId = startNodeSelect.value;
     const startNode = getNode(startId);
     
     // For Prim's, distance represents the cheapest edge connecting it to the MST
@@ -469,7 +484,6 @@ async function runPrims() {
     logMessage(`<b>Finished:</b> Minimum Spanning Tree built! Total weight: ${totalMSTWeight}`);
     resetBtn.disabled = false;
 
-    // Display total weight and selected edges in the Results box
     const mstHTML = `
         <div style="width: 100%; font-size: 18px; margin-bottom: 10px; color: #111;">
             Total Minimum Weight: <strong style="color: var(--prims-color); font-size: 22px;">${totalMSTWeight}</strong>
@@ -480,5 +494,101 @@ async function runPrims() {
     displayResults(`Prim's Minimum Spanning Tree`, mstHTML, 'var(--prims-color)');
 }
 
+// ---------------- KRUSKAL'S ALGORITHM LOGIC ----------------
+async function runKruskal() {
+    if (isRunning) return;
+    lockControls();
+    updateConceptText('Kruskal');
+    
+    // Clear the visual distances beneath nodes as Kruskal doesn't use node distances
+    nodes.forEach(n => n.distance = null);
+
+    // 1. Sort all edges by weight globally
+    let sortedEdges = edges.map(e => ({ u: e[0], v: e[1], w: e[2] }));
+    sortedEdges.sort((a, b) => a.w - b.w);
+
+    // 2. Initialize Union-Find (Disjoint Set)
+    const parentMap = {};
+    nodes.forEach(n => parentMap[n.id] = n.id);
+    
+    function find(i) {
+        if (parentMap[i] === i) return i;
+        return parentMap[i] = find(parentMap[i]); // Path compression
+    }
+
+    let totalMSTWeight = 0;
+    const mstEdgesLog = [];
+    const formatEdges = (edgeList) => edgeList.map(e => `${e.u}-${e.v}(${e.w})`);
+
+    logMessage(`<b>Start:</b> Retrieved all edges and sorted them by weight.`);
+    drawGraph();
+    await sleep(getSpeed());
+
+    // 3. Iterate through sorted edges
+    for (let i = 0; i < sortedEdges.length; i++) {
+        if (!isRunning) break;
+        const edge = sortedEdges[i];
+        const nodeU = getNode(edge.u);
+        const nodeV = getNode(edge.v);
+
+        // Update visual queue to show remaining edges
+        const remainingEdges = sortedEdges.slice(i);
+        renderDataStructureVisual(formatEdges(remainingEdges), 'Sorted Edge List');
+
+        // Save old states to restore if we discard the edge
+        const oldStateU = nodeU.state;
+        const oldStateV = nodeV.state;
+
+        // Highlight nodes currently being evaluated
+        nodeU.state = 'current';
+        nodeV.state = 'current';
+        drawGraph();
+        logMessage(`Evaluating edge <b>${edge.u}-${edge.v}</b> (Weight: ${edge.w})...`);
+        await sleep(getSpeed());
+
+        const rootU = find(edge.u);
+        const rootV = find(edge.v);
+
+        if (rootU !== rootV) {
+            // UNION: No cycle formed, safe to add to MST!
+            parentMap[rootU] = rootV;
+            totalMSTWeight += edge.w;
+            mstEdgesLog.push(`${edge.u} ↔ ${edge.v} (Wt: ${edge.w})`);
+
+            // Tell drawGraph() to highlight this edge in green
+            nodeU.mstLinks.push(edge.v);
+
+            logMessage(`↳ <b style="color: var(--kruskal-color);">Include:</b> No cycle formed. Added to MST!`);
+
+            // Mark nodes as part of the established tree
+            nodeU.state = 'visited';
+            nodeV.state = 'visited';
+        } else {
+            // CYCLE DETECTED
+            logMessage(`↳ <b style="color: var(--danger);">Discard:</b> Connects already connected nodes (Creates a Cycle).`);
+            
+            // Restore previous colors (stay visited if they were already in the MST)
+            nodeU.state = oldStateU === 'unvisited' ? 'unvisited' : 'visited';
+            nodeV.state = oldStateV === 'unvisited' ? 'unvisited' : 'visited';
+        }
+
+        drawGraph();
+        await sleep(getSpeed() * 0.8);
+    }
+
+    logMessage(`<b>Finished:</b> Kruskal's MST built! Total weight: ${totalMSTWeight}`);
+    resetBtn.disabled = false;
+
+    const mstHTML = `
+        <div style="width: 100%; font-size: 18px; margin-bottom: 10px; color: #111;">
+            Total Minimum Weight: <strong style="color: var(--kruskal-color); font-size: 22px;">${totalMSTWeight}</strong>
+        </div>
+        ${mstEdgesLog.map(e => `<div class="result-badge">${e}</div>`).join('')}
+    `;
+    
+    displayResults(`Kruskal's Minimum Spanning Tree`, mstHTML, 'var(--kruskal-color)');
+}
+
+// Initialize things when the page loads
 setupDropdown();
 resetGraph();
