@@ -4,6 +4,7 @@ const startBfsBtn = document.getElementById('startBfsBtn');
 const startDfsBtn = document.getElementById('startDfsBtn');
 const startDijkstraBtn = document.getElementById('startDijkstraBtn');
 const startFloydBtn = document.getElementById('startFloydBtn');
+const startPrimsBtn = document.getElementById('startPrimsBtn');
 const resetBtn = document.getElementById('resetBtn');
 const logBox = document.getElementById('logBox');
 const dsContainer = document.getElementById('dsContainer');
@@ -82,19 +83,25 @@ function updateConceptText(algo) {
     } else if (algo === 'Floyd') {
         conceptTitle.innerHTML = "Floyd-Warshall Algorithm";
         conceptTitle.style.color = 'var(--floyd-color)';
-        conceptDesc.innerHTML = `<strong>Floyd-Warshall</strong> finds shortest paths between <strong>ALL PAIRS</strong> simultaneously! It evaluates every path via an intermediate node <i>k</i>. Watch the matrix update dynamically!`;
+        conceptDesc.innerHTML = `<strong>Floyd-Warshall</strong> finds shortest paths between <strong>ALL PAIRS</strong> simultaneously! It evaluates every path via an intermediate node <i>k</i>.`;
         dsTitle.innerHTML = '2D Distance Matrix';
         dsTitle.style.color = 'var(--floyd-color)';
         complexityBox.style.borderLeftColor = 'var(--floyd-color)';
         complexityBox.innerHTML = `<strong>Time:</strong> O(V³)<br><strong>Space:</strong> O(V²)`;
-        
-        // Update legend for Floyd
         dynamicLegend.innerHTML = `
             <div class="legend-item"><div class="color-box" style="background: #ffffff;"></div> Default</div>
             <div class="legend-item"><div class="color-box" style="background: #FFA500;"></div> Source (i)</div>
             <div class="legend-item"><div class="color-box" style="background: #87CEFA;"></div> Dest (j)</div>
             <div class="legend-item"><div class="color-box" style="background: #9C27B0;"></div> Via (k)</div>
         `;
+    } else if (algo === 'Prims') {
+        conceptTitle.innerHTML = "Prim's Algorithm (MST)";
+        conceptTitle.style.color = 'var(--prims-color)';
+        conceptDesc.innerHTML = `<strong>Prim's Algorithm</strong> finds the <strong>Minimum Spanning Tree (MST)</strong>. It greedily expands by picking the cheapest available edge connecting the growing tree to a new node.`;
+        dsTitle.innerHTML = 'Priority Queue Status (Min Edge Weight)';
+        dsTitle.style.color = 'var(--prims-color)';
+        complexityBox.style.borderLeftColor = 'var(--prims-color)';
+        complexityBox.innerHTML = `<strong>Time:</strong> O((V + E) log V)<br><strong>Space:</strong> O(V)`;
     }
 }
 
@@ -121,13 +128,10 @@ function renderDataStructureVisual(array, type = 'Queue') {
     });
 }
 
-// NEW: Renders a 2D Matrix for Floyd-Warshall
 function renderMatrixVisual(matrix, activeI = -1, activeJ = -1, updated = false) {
     dsContainer.innerHTML = '';
     const table = document.createElement('table');
     table.className = 'matrix-table';
-
-    // Header Row
     const trHead = document.createElement('tr');
     trHead.innerHTML = '<th></th>' + nodes.map(n => `<th>${n.id}</th>`).join('');
     table.appendChild(trHead);
@@ -135,12 +139,10 @@ function renderMatrixVisual(matrix, activeI = -1, activeJ = -1, updated = false)
     for (let i = 0; i < matrix.length; i++) {
         const tr = document.createElement('tr');
         tr.innerHTML = `<th>${nodes[i].id}</th>`;
-        
         for (let j = 0; j < matrix[i].length; j++) {
             const td = document.createElement('td');
             let val = matrix[i][j] === Infinity ? '∞' : matrix[i][j];
             td.textContent = val;
-            
             if (i === activeI && j === activeJ) {
                 td.className = updated ? 'matrix-update' : 'matrix-highlight';
             }
@@ -158,6 +160,7 @@ function resetGraph() {
     startDfsBtn.disabled = false;
     startDijkstraBtn.disabled = false;
     startFloydBtn.disabled = false;
+    startPrimsBtn.disabled = false;
     startNodeSelect.disabled = false;
     logBox.innerHTML = ''; 
     
@@ -171,7 +174,6 @@ function resetGraph() {
     conceptDesc.innerHTML = `Select an algorithm to see how it explores the graph differently!`;
     complexityBox.style.borderLeftColor = '#333';
     
-    // Reset Legend
     dynamicLegend.innerHTML = `
         <div class="legend-item"><div class="color-box" style="background: #ffffff;"></div> Unvisited</div>
         <div class="legend-item"><div class="color-box" style="background: #87CEFA;"></div> In Memory</div>
@@ -219,12 +221,11 @@ function drawGraph() {
         ctx.beginPath();
         ctx.arc(node.x, node.y, 25, 0, Math.PI * 2);
         
-        // Standard Colors vs Floyd Colors
         if (node.state === 'unvisited') { ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#333'; } 
-        else if (node.state === 'queued') { ctx.fillStyle = '#87CEFA'; ctx.strokeStyle = '#333'; } // Blue
-        else if (node.state === 'current') { ctx.fillStyle = '#FFA500'; ctx.strokeStyle = '#333'; } // Orange
-        else if (node.state === 'visited') { ctx.fillStyle = '#32CD32'; ctx.strokeStyle = '#111'; } // Green
-        else if (node.state === 'via') { ctx.fillStyle = '#9C27B0'; ctx.strokeStyle = '#fff'; } // Purple for Floyd 'k'
+        else if (node.state === 'queued') { ctx.fillStyle = '#87CEFA'; ctx.strokeStyle = '#333'; } 
+        else if (node.state === 'current') { ctx.fillStyle = '#FFA500'; ctx.strokeStyle = '#333'; } 
+        else if (node.state === 'visited') { ctx.fillStyle = '#32CD32'; ctx.strokeStyle = '#111'; } 
+        else if (node.state === 'via') { ctx.fillStyle = '#9C27B0'; ctx.strokeStyle = '#fff'; } 
 
         ctx.fill();
         ctx.lineWidth = 3;
@@ -250,6 +251,7 @@ function lockControls() {
     startDfsBtn.disabled = true;
     startDijkstraBtn.disabled = true;
     startFloydBtn.disabled = true;
+    startPrimsBtn.disabled = true;
     resetBtn.disabled = true; 
     startNodeSelect.disabled = true; 
     logBox.innerHTML = '';
@@ -275,7 +277,7 @@ function displayResults(title, htmlContent, color) {
 }
 
 // ---------------- BFS LOGIC ----------------
-async function runBFS() { /* ... (Unchanged, keep logic from previous step) ... */ 
+async function runBFS() { 
     if (isRunning) return; lockControls(); updateConceptText('BFS');
     const adjList = buildAdjacencyList(); const queue = []; const traversalOrder = [];
     const startNode = getNode(startNodeSelect.value); 
@@ -299,7 +301,7 @@ async function runBFS() { /* ... (Unchanged, keep logic from previous step) ... 
 }
 
 // ---------------- DFS LOGIC ----------------
-async function runDFS() { /* ... (Unchanged, keep logic from previous step) ... */ 
+async function runDFS() { 
     if (isRunning) return; lockControls(); updateConceptText('DFS');
     const adjList = buildAdjacencyList(); const stack = []; const traversalOrder = [];
     const startNode = getNode(startNodeSelect.value); 
@@ -324,7 +326,7 @@ async function runDFS() { /* ... (Unchanged, keep logic from previous step) ... 
 }
 
 // ---------------- DIJKSTRA LOGIC ----------------
-async function runDijkstra() { /* ... (Unchanged, keep logic from previous step) ... */ 
+async function runDijkstra() { 
     if (isRunning) return; lockControls(); updateConceptText('Dijkstra');
     const adjList = buildAdjacencyList(); const startId = startNodeSelect.value; const startNode = getNode(startId);
     startNode.distance = 0; const pq = [{ id: startId, dist: 0 }]; const formatPQ = (q) => q.map(item => `${item.id}(${item.dist})`);
@@ -354,78 +356,129 @@ async function runDijkstra() { /* ... (Unchanged, keep logic from previous step)
 
 // ---------------- FLOYD-WARSHALL LOGIC ----------------
 async function runFloydWarshall() {
-    if (isRunning) return;
-    lockControls();
-    updateConceptText('Floyd');
-
-    // Hide manual node distances to avoid clutter, FW uses the matrix
+    if (isRunning) return; lockControls(); updateConceptText('Floyd');
     nodes.forEach(n => n.distance = null);
-
-    const N = nodes.length;
-    // Initialize V x V matrix
-    const dist = Array(N).fill(null).map(() => Array(N).fill(Infinity));
-    
-    // Setup initial distances (Edges + Diagonals = 0)
+    const N = nodes.length; const dist = Array(N).fill(null).map(() => Array(N).fill(Infinity));
     for (let i = 0; i < N; i++) dist[i][i] = 0;
-    edges.forEach(([u, v, w]) => {
-        const uIdx = nodes.findIndex(n => n.id === u);
-        const vIdx = nodes.findIndex(n => n.id === v);
-        dist[uIdx][vIdx] = w;
-        dist[vIdx][uIdx] = w; // Undirected
-    });
-
-    logMessage(`<b>Start:</b> Initializing Adjacency Matrix.`);
-    renderMatrixVisual(dist);
-    drawGraph();
-    await sleep(1000);
-
-    // O(V^3) Loop
+    edges.forEach(([u, v, w]) => { const uIdx = nodes.findIndex(n => n.id === u); const vIdx = nodes.findIndex(n => n.id === v); dist[uIdx][vIdx] = w; dist[vIdx][uIdx] = w; });
+    logMessage(`<b>Start:</b> Initializing Adjacency Matrix.`); renderMatrixVisual(dist); drawGraph(); await sleep(1000);
     for (let k = 0; k < N; k++) {
-        if (!isRunning) break;
-        logMessage(`<b>Phase ${k+1}/${N}:</b> Testing all paths going <i>via</i> Node ${nodes[k].id}.`);
-        
+        if (!isRunning) break; logMessage(`<b>Phase ${k+1}/${N}:</b> Testing all paths going <i>via</i> Node ${nodes[k].id}.`);
         for (let i = 0; i < N; i++) {
             for (let j = 0; j < N; j++) {
                 if (!isRunning) break;
-                
-                // Skip self-loops or impossible paths to speed up visualization visually
                 if (i === j || dist[i][k] === Infinity || dist[k][j] === Infinity) continue;
-
-                const currentPath = dist[i][j];
-                const newPath = dist[i][k] + dist[k][j];
-
+                const currentPath = dist[i][j]; const newPath = dist[i][k] + dist[k][j];
                 if (newPath < currentPath) {
                     dist[i][j] = newPath;
-                    
-                    // Flash Graph to show what's being evaluated
-                    nodes.forEach(n => n.state = 'unvisited');
-                    nodes[i].state = 'current'; // Orange (Source)
-                    nodes[j].state = 'queued';  // Blue (Dest)
-                    nodes[k].state = 'via';     // Purple (Via node)
-                    
+                    nodes.forEach(n => n.state = 'unvisited'); nodes[i].state = 'current'; nodes[j].state = 'queued'; nodes[k].state = 'via';
                     logMessage(`↳ <b>Update:</b> ${nodes[i].id} → ${nodes[j].id} via ${nodes[k].id} is shorter! (New Dist: ${newPath})`);
-                    
-                    renderMatrixVisual(dist, i, j, true);
-                    drawGraph();
-                    
-                    // Only pause if an actual update happened to keep it from taking too long
-                    await sleep(Math.max(300, getSpeed())); 
+                    renderMatrixVisual(dist, i, j, true); drawGraph(); await sleep(Math.max(300, getSpeed())); 
                 } else {
-                    // Optional: Show the cell being checked without pausing as long
-                    renderMatrixVisual(dist, i, j, false);
-                    await sleep(Math.min(10, getSpeed() / 10)); // Very fast skip
+                    renderMatrixVisual(dist, i, j, false); await sleep(Math.min(10, getSpeed() / 10)); 
                 }
             }
         }
-        
-        // Reset colors at end of 'k' phase
-        nodes.forEach(n => n.state = 'unvisited');
+        nodes.forEach(n => n.state = 'unvisited'); drawGraph();
+    }
+    renderMatrixVisual(dist); logMessage('<b>Finished:</b> All-Pairs Shortest Paths computed!'); resetBtn.disabled = false;
+    let matrixHTML = `<table class="matrix-table" style="margin: 0; background: transparent;"><tr><th></th>${nodes.map(n => `<th>${n.id}</th>`).join('')}</tr>`;
+    for(let i = 0; i < N; i++) { matrixHTML += `<tr><th>${nodes[i].id}</th>`; for(let j = 0; j < N; j++) { let val = dist[i][j] === Infinity ? '∞' : dist[i][j]; matrixHTML += `<td>${val}</td>`; } matrixHTML += `</tr>`; }
+    matrixHTML += `</table>`;
+    displayResults(`Floyd-Warshall Final Matrix`, matrixHTML, 'var(--floyd-color)');
+}
+
+// ---------------- PRIM'S ALGORITHM LOGIC ----------------
+async function runPrims() {
+    if (isRunning) return;
+    lockControls();
+    updateConceptText('Prims');
+
+    const adjList = buildAdjacencyList();
+        const startId = startNodeSelect.value;
+    const startNode = getNode(startId);
+    
+    // For Prim's, distance represents the cheapest edge connecting it to the MST
+    startNode.distance = 0; 
+
+    const pq = [{ id: startId, dist: 0 }];
+    const formatPQ = (q) => q.map(item => `${item.id}(${item.dist})`);
+
+    logMessage(`<b>Start:</b> Building MST starting from Node ${startId}.`);
+    renderDataStructureVisual(formatPQ(pq), 'Priority Queue');
+    
+    startNode.state = 'queued';
+    drawGraph();
+    await sleep(getSpeed());
+
+    let totalMSTWeight = 0;
+    const mstEdges = [];
+
+    while (pq.length > 0) {
+        if (!isRunning) break;
+
+        // Min-heap behavior based on connecting edge weight
+        pq.sort((a, b) => a.dist - b.dist);
+        const currentItem = pq.shift();
+        const currentId = currentItem.id;
+        const currentNode = getNode(currentId);
+
+        if (currentNode.state === 'visited') continue;
+
+        // Add to total weight if it has a parent
+        if (currentNode.parent !== null) {
+            const connectingEdge = adjList[currentNode.parent].find(e => e.neighbor === currentId);
+            if (connectingEdge) {
+                totalMSTWeight += connectingEdge.weight;
+                mstEdges.push(`${currentNode.parent} ↔ ${currentId} (Wt: ${connectingEdge.weight})`);
+            }
+        }
+
+        renderDataStructureVisual(formatPQ(pq), 'Priority Queue');
+        currentNode.state = 'current';
         drawGraph();
+        await sleep(getSpeed());
+
+        for (let edge of adjList[currentId]) {
+            const neighborId = edge.neighbor;
+            const weight = edge.weight;
+            const neighborNode = getNode(neighborId);
+
+            if (neighborNode.state !== 'visited' && weight < neighborNode.distance) {
+                // Found a cheaper way to attach this unvisited node to the growing MST
+                neighborNode.distance = weight; 
+                neighborNode.parent = currentId; 
+                
+                logMessage(`↳ <b>Update:</b> Cheaper edge found to connect ${neighborId} (Weight: ${weight}).`);
+                
+                neighborNode.state = 'queued';
+                pq.push({ id: neighborId, dist: weight });
+                
+                renderDataStructureVisual(formatPQ(pq), 'Priority Queue');
+                drawGraph();
+                await sleep(getSpeed() * 0.8);
+            }
+        }
+
+        currentNode.state = 'visited';
+        logMessage(`<b>Complete:</b> Node ${currentId} is officially part of the MST.`);
+        drawGraph();
+        await sleep(getSpeed() * 0.8);
     }
 
-    renderMatrixVisual(dist);
-    logMessage('<b>Finished:</b> All-Pairs Shortest Paths computed!');
+    logMessage(`<b>Finished:</b> Minimum Spanning Tree built! Total weight: ${totalMSTWeight}`);
     resetBtn.disabled = false;
 
-    // Show final matrix in the results box!
-    let matrixHTML = `<table class="matrix-table" 
+    // Display total weight and selected edges in the Results box
+    const mstHTML = `
+        <div style="width: 100%; font-size: 18px; margin-bottom: 10px; color: #111;">
+            Total Minimum Weight: <strong style="color: var(--prims-color); font-size: 22px;">${totalMSTWeight}</strong>
+        </div>
+        ${mstEdges.map(edge => `<div class="result-badge">${edge}</div>`).join('')}
+    `;
+    
+    displayResults(`Prim's Minimum Spanning Tree`, mstHTML, 'var(--prims-color)');
+}
+
+setupDropdown();
+resetGraph();
