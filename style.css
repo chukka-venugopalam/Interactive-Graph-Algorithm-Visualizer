@@ -12,6 +12,8 @@
     --floyd-hover: #F57C00;
     --prims-color: #3F51B5;
     --prims-hover: #303F9F;
+    --kruskal-color: #E91E63;
+    --kruskal-hover: #C2185B;
     --danger: #f44336;
     --danger-hover: #da190b;
 }
@@ -27,7 +29,7 @@ body {
     margin: 0;
 }
 
-h1 { margin-bottom: 20px; }
+h1 { margin-bottom: 20px; text-align: center; }
 
 .main-container {
     display: flex;
@@ -97,6 +99,9 @@ button {
 
 #startPrimsBtn { background-color: var(--prims-color); }
 #startPrimsBtn:hover { background-color: var(--prims-hover); }
+
+#startKruskalBtn { background-color: var(--kruskal-color); }
+#startKruskalBtn:hover { background-color: var(--kruskal-hover); }
 
 button:disabled { background-color: #ccc !important; cursor: not-allowed; }
 
