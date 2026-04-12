@@ -1,142 +1,137 @@
 # Graph Traversal & Pathfinding Visualizer
 
-An interactive web-based visualizer to understand core graph algorithms used in GATE and technical interviews.
+An interactive web-based tool to visualize graph traversal and pathfinding algorithms in real-time. Designed for students preparing for concepts like DSA and GATE.
 
 ---
 
 ##  Features
 
-- Visual representation of graph traversal and shortest path algorithms
-- Step-by-step execution with animation
-- Adjustable speed control
-- Execution logs for better understanding
-- Data structure visualization (Queue, Stack, Priority Queue, Matrix)
+###  Traversal Algorithms
+- Breadth-First Search (BFS)
+- Depth-First Search (DFS)
+
+###  Shortest Path Algorithms
+- Dijkstra’s Algorithm (Single Source Shortest Path)
+- Floyd-Warshall Algorithm (All-Pairs Shortest Path)
+
+###  Minimum Spanning Tree (MST)
+- Prim’s Algorithm
+- Kruskal’s Algorithm (Union-Find)
 
 ---
 
-##  Supported Algorithms
+##  Key Highlights
 
-✔ BFS (Breadth-First Search)  
-✔ DFS (Depth-First Search)  
-✔ Dijkstra (Single Source Shortest Path)  
-✔ Floyd-Warshall (All Pairs Shortest Path)
+- Real-time graph visualization using HTML5 Canvas
+- Step-by-step execution with adjustable speed
+- Dynamic data structure visualization:
+  - Queue (BFS)
+  - Stack (DFS)
+  - Priority Queue (Dijkstra & Prim’s)
+  - Edge list (Kruskal)
+  - Matrix (Floyd-Warshall)
+- Execution logs with timestamps
+- Final results panel with clear outputs
+- Algorithm-specific UI and legends
 
 ---
 
 ##  Algorithms Overview
 
-###  BFS (Breadth-First Search)
-- Explores graph level by level
-- Uses **Queue (FIFO)**
+### BFS
+- Explores level-by-level
+- Time: O(V + E)
 
-**Time Complexity:** O(V + E)  
-**Space Complexity:** O(V)
+### DFS
+- Explores depth-first
+- Time: O(V + E)
 
----
+### Dijkstra
+- Finds shortest path from a source node
+- Uses greedy + priority queue
+- Time: O((V + E) log V)
 
-###  DFS (Depth-First Search)
-- Explores graph depth-wise
-- Uses **Stack (LIFO)**
+### Floyd-Warshall
+- Computes shortest paths between all pairs
+- Uses dynamic programming
+- Time: O(V³)
 
-**Time Complexity:** O(V + E)  
-**Space Complexity:** O(V)
+### Prim’s
+- Builds MST by expanding tree
+- Time: O((V + E) log V)
 
----
-
-###  Dijkstra’s Algorithm
-- Finds shortest path from a **single source node**
-- Uses **Greedy approach + Priority Queue**
-- Works only with **non-negative weights**
-
-#### Features
-- Real-time distance updates
-- Priority queue visualization
-- Path tracking using parent nodes
-
-**Time Complexity:** O((V + E) log V)  
-**Space Complexity:** O(V)
-
----
-
-###  Floyd-Warshall Algorithm
-- Finds shortest paths between **all pairs of nodes**
-- Uses **Dynamic Programming (Matrix-based approach)**
-
-#### Features
-- Live distance matrix visualization
-- Step-by-step updates using intermediate node `k`
-- Highlights:
-  - Source node (i)
-  - Destination node (j)
-  - Intermediate node (k)
-
-**Time Complexity:** O(V³)  
-**Space Complexity:** O(V²)
-
-### Prim's Algorithm (MST)
-- Finds the Minimum Spanning Tree (MST) (cheapest way to connect all nodes without cycles)
-- Uses a Greedy approach + Priority Queue (Min Edge Weight)
-#### Features: 
-- Calculates the Total Minimum Weight,
-- highlights chosen edges dynamically
-**Time Complexity:** O((V + E) log V)
-**Space Complexity:** O(V)
-
+### Kruskal’s
+- Builds MST using edge sorting + Union-Find
+- Time: O(E log E)
 
 ---
 
 ##  Tech Stack
 
-- HTML
-- CSS
-- JavaScript (Canvas API)
+- HTML5
+- CSS3
+- JavaScript (Vanilla)
+- Canvas API
 
 ---
 
-##  How to Use
+##  Visualization Details
 
-1. Select a **Start Node**
-2. Adjust **Speed**
-3. Click on any algorithm:
-   - BFS
-   - DFS
-   - Dijkstra
-   - Floyd-Warshall
-   - prims algorithm 
-4. Watch:
-   - Graph traversal
-   - Data structure updates
-   - Execution logs
-   - Final results
+- Nodes change color based on state:
+  - White → Unvisited
+  - Blue → In memory
+  - Orange → Processing
+  - Green → Visited
+
+- Floyd-Warshall:
+  - Highlights (i, j, k)
+  - Updates matrix live
+
+- Dijkstra:
+  - Displays distance values below nodes
+
+---
+
+##  Project Structure
+/project-root 
+│── index.html 
+│── style.css 
+│── script.js
+
+---
+
+##  How to Run
+
+1. Clone the repository:
+git clone 
+
+2. Open `index.html` in your browser
 
 ---
 
 ##  Learning Purpose
 
-This project is built to:
-- Strengthen understanding of **graph algorithms**
-- Prepare for **GATE and coding interviews**
-- Visualize abstract concepts in an intuitive way
-
----
-
-##  Limitations
-
-- Dijkstra does not support negative edge weights
-- Graph is predefined (no custom input yet)
+This project helps in:
+- Understanding graph algorithms visually
+- Strengthening DSA concepts
+- Preparing for coding interviews and GATE
 
 ---
 
 ##  Future Improvements
 
-- Add kruskal algorithm 
-- Allow user-defined graphs
-- Path reconstruction visualization
-- Mobile UI improvements
+- User-defined graph input
+- Directed graph support
+- Negative weight cycle detection
 
 ---
 
+##  Contribution
 
-##  Author
+Feel free to fork and improve this project!
 
-Built as part of DSA and GATE preparation.
+---
+
+##  License
+
+Open-source and free to use
