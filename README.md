@@ -73,16 +73,15 @@ An interactive web-based visualizer to understand core graph algorithms used in 
 **Time Complexity:** O(V³)  
 **Space Complexity:** O(V²)
 
----
+### Prim's Algorithm (MST)
+- Finds the Minimum Spanning Tree (MST) (cheapest way to connect all nodes without cycles)
+- Uses a Greedy approach + Priority Queue (Min Edge Weight)
+#### Features: 
+- Calculates the Total Minimum Weight,
+- highlights chosen edges dynamically
+**Time Complexity:** O((V + E) log V)
+**Space Complexity:** O(V)
 
-## Key Differences
-
-| Algorithm        | Type                | Use Case                      |
-|-----------------|---------------------|-------------------------------|
-| BFS             | Traversal           | Level-wise exploration        |
-| DFS             | Traversal           | Deep exploration              |
-| Dijkstra        | Greedy              | Single source shortest path   |
-| Floyd-Warshall  | Dynamic Programming | All pairs shortest paths      |
 
 ---
 
@@ -103,6 +102,7 @@ An interactive web-based visualizer to understand core graph algorithms used in 
    - DFS
    - Dijkstra
    - Floyd-Warshall
+   - prims algorithm 
 4. Watch:
    - Graph traversal
    - Data structure updates
@@ -129,8 +129,7 @@ This project is built to:
 
 ##  Future Improvements
 
-- Add Bellman-Ford algorithm (negative weights)
-- Add A* pathfinding
+- Add kruskal algorithm 
 - Allow user-defined graphs
 - Path reconstruction visualization
 - Mobile UI improvements
