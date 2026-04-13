@@ -1,137 +1,121 @@
 # Graph Traversal & Pathfinding Visualizer
 
-An interactive web-based tool to visualize graph traversal and pathfinding algorithms in real-time. Designed for students preparing for concepts like DSA and GATE.
+An interactive web-based tool designed to visualize complex graph traversal, shortest path, and minimum spanning tree algorithms in real-time. This project is purpose-built for students and developers preparing for technical interviews and computer science examinations (such as GATE), providing an intuitive way to understand abstract data structures.
 
 ---
 
-##  Features
+## Features
 
-###  Traversal Algorithms
-- Breadth-First Search (BFS)
-- Depth-First Search (DFS)
+### Interactive Graph Editor
+* **Draw Nodes & Edges:** Click to add nodes and select two nodes to connect them with custom weighted edges.
+* **Delete Mode:** Easily remove mistakes by clicking a node to delete it and its connecting edges.
 
-###  Shortest Path Algorithms
-- Dijkstra’s Algorithm (Single Source Shortest Path)
-- Floyd-Warshall Algorithm (All-Pairs Shortest Path)
+### Traversal Algorithms
+* **Breadth-First Search (BFS):** Explores the graph level-by-level.
+* **Depth-First Search (DFS):** Explores the graph depth-first.
 
-###  Minimum Spanning Tree (MST)
-- Prim’s Algorithm
-- Kruskal’s Algorithm (Union-Find)
+### Shortest Path Algorithms
+* **Dijkstra’s Algorithm:** Computes the single-source shortest path.
+* **Floyd-Warshall Algorithm:** Computes the shortest paths between all pairs of nodes simultaneously.
 
----
-
-##  Key Highlights
-
-- Real-time graph visualization using HTML5 Canvas
-- Step-by-step execution with adjustable speed
-- Dynamic data structure visualization:
-  - Queue (BFS)
-  - Stack (DFS)
-  - Priority Queue (Dijkstra & Prim’s)
-  - Edge list (Kruskal)
-  - Matrix (Floyd-Warshall)
-- Execution logs with timestamps
-- Final results panel with clear outputs
-- Algorithm-specific UI and legends
+### Minimum Spanning Tree (MST)
+* **Prim’s Algorithm:** Builds the MST by expanding outward from a starting node.
+* **Kruskal’s Algorithm:** Builds the MST by globally sorting edges and utilizing a Disjoint Set (Union-Find).
 
 ---
 
-##  Algorithms Overview
+## Key Highlights
 
-### BFS
-- Explores level-by-level
-- Time: O(V + E)
-
-### DFS
-- Explores depth-first
-- Time: O(V + E)
-
-### Dijkstra
-- Finds shortest path from a source node
-- Uses greedy + priority queue
-- Time: O((V + E) log V)
-
-### Floyd-Warshall
-- Computes shortest paths between all pairs
-- Uses dynamic programming
-- Time: O(V³)
-
-### Prim’s
-- Builds MST by expanding tree
-- Time: O((V + E) log V)
-
-### Kruskal’s
-- Builds MST using edge sorting + Union-Find
-- Time: O(E log E)
+* **Real-Time Canvas Visualization:** Smooth, state-based animations rendered via HTML5 Canvas.
+* **Step-by-Step Execution:** Adjustable speed controls allow users to slow down complex logic or speed through simple steps.
+* **Dynamic Data Structure Tracking:** The UI actively displays the underlying memory structure based on the chosen algorithm:
+  * Queue (BFS)
+  * Stack (DFS)
+  * Priority Queue (Dijkstra & Prim’s)
+  * Sorted Edge List (Kruskal)
+  * 2D Adjacency Matrix (Floyd-Warshall)
+* **Execution Logs:** A built-in terminal output provides timestamped, step-by-step reasoning.
+* **Final Results Panel:** Displays clear, formatted outputs (traversal routes, shortest distances, or total MST weights) upon completion.
 
 ---
 
-##  Tech Stack
+## Algorithms Overview
 
-- HTML5
-- CSS3
-- JavaScript (Vanilla)
-- Canvas API
-
----
-
-##  Visualization Details
-
-- Nodes change color based on state:
-  - White → Unvisited
-  - Blue → In memory
-  - Orange → Processing
-  - Green → Visited
-
-- Floyd-Warshall:
-  - Highlights (i, j, k)
-  - Updates matrix live
-
-- Dijkstra:
-  - Displays distance values below nodes
+| Algorithm | Type | Time Complexity | Space Complexity | Data Structure Used |
+| :--- | :--- | :--- | :--- | :--- |
+| **BFS** | Traversal | O(V + E) | O(V) | Queue (FIFO) |
+| **DFS** | Traversal | O(V + E) | O(V) | Stack (LIFO) |
+| **Dijkstra** | Shortest Path | O((V + E) log V) | O(V) | Priority Queue |
+| **Floyd-Warshall** | Shortest Path | O(V³) | O(V²) | 2D Array (Matrix) |
+| **Prim's** | MST | O((V + E) log V) | O(V) | Priority Queue |
+| **Kruskal's** | MST | O(E log E) | O(V + E) | Disjoint Set (Union-Find) |
 
 ---
 
-##  Project Structure
-/project-root 
-│── index.html 
-│── style.css 
-│── script.js
+## Visualization Details
+
+Nodes dynamically change color to represent their algorithmic state:
+* **White:** Unvisited
+* **Blue:** In Memory (Queued/Stacked)
+* **Orange:** Processing (Current Node)
+* **Green:** Visited / Final Path
+
+**Algorithm-Specific Details:**
+* **Floyd-Warshall:** Flashes distinct colors to highlight the Source (i), Destination (j), and Intermediate (k) nodes while updating the matrix live.
+* **Dijkstra & Prim's:** Displays live distance/weight values directly below the active nodes.
+* **Spanning Trees:** Final paths and trees are permanently highlighted with thickened green edges.
 
 ---
 
-##  How to Run
+## Tech Stack
 
-1. Clone the repository:
-git clone 
-
-2. Open `index.html` in your browser
-
----
-
-##  Learning Purpose
-
-This project helps in:
-- Understanding graph algorithms visually
-- Strengthening DSA concepts
-- Preparing for coding interviews and GATE
+* HTML5
+* CSS3
+* JavaScript (Vanilla, ES6 Modules)
+* Canvas API
 
 ---
 
-##  Future Improvements
+## Project Structure
 
-- User-defined graph input
-- Directed graph support
-- Negative weight cycle detection
+```text
+graph-visualizer/
+├── index.html        # Main UI, layout, and canvas container
+├── style.css         # Responsive design and component styling
+├── main.js           # Event listeners, modes, and editor logic
+├── algorithms.js     # Pure algorithmic implementations
+└── utils.js          # State management and canvas rendering
 
----
+```
+## How to Run
+Because this project utilizes modern ES6 JavaScript Modules (import/export), it must be run through a local web server to avoid CORS security restrictions.
+**1. Clone the repository:**
+```bash
+git clone [https://github.com/yourusername/graph-visualizer.git](https://github.com/yourusername/graph-visualizer.git)
 
-##  Contribution
+```
+**2. Navigate to the directory:**
+```bash
+cd graph-visualizer
 
-Feel free to fork and improve this project!
+```
+**3. Run a local server:**
+ * **Desktop (VS Code):** Install the Live Server extension, right-click index.html, and select Open with Live Server.
+ * **Mobile (Spck Editor):** Import the files into a new HTML project and tap the Play button to utilize the built-in server.
+## Learning Purpose
+This tool was developed to:
+ * Provide a visual, intuitive understanding of abstract graph theory.
+ * Strengthen Data Structures and Algorithms (DSA) concepts.
+ * Serve as a practical study aid for coding interviews and academic exams.
+## Future Improvements
+ * Directed graph support.
+ * Negative weight cycle detection (Bellman-Ford Algorithm).
+ * A* (A-Star) Pathfinding integration.
+ * Draggable nodes to rearrange the graph layout post-creation.
+## Contribution
+Contributions, issues, and feature requests are highly encouraged. Feel free to fork the repository and submit a pull request!
+## License
+This project is open-source and free to use under the MIT License.
+```
 
----
-
-##  License
-
-Open-source and free to use
+```
