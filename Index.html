@@ -3,17 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph Traversal & Pathfinding Visualization</title>
+    <title>Interactive Graph Visualizer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Graph Traversal Visualization</h1>
+    <h1>Interactive Graph Algorithm Visualizer</h1>
     
     <div class="main-container">
-        
         <div class="viz-panel">
             
+            <<div class="edit-bar">
+    <label class="mode-label">
+        <input type="radio" name="appMode" value="run" id="modeRun" checked> 🏃 Run
+    </label>
+    <label class="mode-label">
+        <input type="radio" name="appMode" value="edit" id="modeEdit"> ✏️ Edit
+    </label>
+    <label class="mode-label">
+        <input type="radio" name="appMode" value="delete" id="modeDelete"> ❌ Delete
+    </label>
+    <button id="clearBtn" class="clear-btn">🗑️ Clear</button>
+</div>
+
+
             <div class="settings-bar">
                 <div class="setting-item">
                     <label for="startNodeSelect"><strong>Start Node:</strong></label>
@@ -26,13 +39,13 @@
             </div>
 
             <div class="controls">
-                <button id="startBfsBtn" onclick="runBFS()">BFS</button>
-                <button id="startDfsBtn" onclick="runDFS()">DFS</button>
-                <button id="startDijkstraBtn" onclick="runDijkstra()">Dijkstra</button>
-                <button id="startFloydBtn" onclick="runFloydWarshall()">Floyd-Warshall</button>
-                <button id="startPrimsBtn" onclick="runPrims()">Prim's (MST)</button>
-                <button id="startKruskalBtn" onclick="runKruskal()">Kruskal's (MST)</button>
-                <button id="resetBtn" onclick="resetGraph()">Reset</button>
+                <button id="startBfsBtn">BFS</button>
+                <button id="startDfsBtn">DFS</button>
+                <button id="startDijkstraBtn">Dijkstra</button>
+                <button id="startFloydBtn">Floyd-Warshall</button>
+                <button id="startPrimsBtn">Prim's (MST)</button>
+                <button id="startKruskalBtn">Kruskal's (MST)</button>
+                <button id="resetBtn">Reset View</button>
             </div>
 
             <div class="ds-wrapper">
@@ -43,6 +56,9 @@
             </div>
 
             <canvas id="graphCanvas" width="550" height="400"></canvas>
+            <p id="editHint" class="edit-hint" style="display: none;">
+                <i>Click empty space to add a Node. Click two Nodes to connect them!</i>
+            </p>
 
             <div class="legend" id="dynamicLegend">
                 <div class="legend-item"><div class="color-box" style="background: #ffffff;"></div> Unvisited</div>
@@ -53,7 +69,6 @@
         </div>
 
         <div class="info-panel">
-            
             <div class="card">
                 <h3 id="conceptTitle">Algorithm Concept</h3>
                 <div id="conceptDesc" class="concept-text">
@@ -61,16 +76,13 @@
                 </div>
                 <div class="complexity" id="complexityBox">
                     <strong>Time:</strong> O(V + E)<br>
-                    <strong>Space:</strong> O(V)<br>
-                    <small><i>Where V = Vertices (Nodes) and E = Edges.</i></small>
+                    <strong>Space:</strong> O(V)
                 </div>
             </div>
-
             <div class="card" style="padding: 0; background: transparent; border: none; box-shadow: none;">
                 <h3 style="color: var(--text-color); margin-bottom: 10px;">Execution Log</h3>
                 <div id="logBox" class="log-container"></div>
             </div>
-
         </div>
     </div>
 
@@ -79,6 +91,6 @@
         <div id="resultsContent" class="results-content"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 </html>
