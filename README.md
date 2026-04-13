@@ -116,6 +116,5 @@ This tool was developed to:
 Contributions, issues, and feature requests are highly encouraged. Feel free to fork the repository and submit a pull request!
 ## License
 This project is open-source and free to use under the MIT License.
-```
-
-```
+## Author 
+chukka.venugopalam
