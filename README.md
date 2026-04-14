@@ -87,6 +87,9 @@ graph-visualizer/
 └── utils.js          # State management and canvas rendering
 
 ```
+## Link Demo 
+https://chukka-venugopalam.github.io/Interactive-Graph-Algorithm-Visualizer/
+
 ## How to Run
 Because this project utilizes modern ES6 JavaScript Modules (import/export), it must be run through a local web server to avoid CORS security restrictions.
 **1. Clone the repository:**
