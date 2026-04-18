@@ -19,24 +19,42 @@ export const getSpeed = () => parseInt(document.getElementById('speedControl').v
 
 // --- GRAPH EDITOR FUNCTIONS ---
 export const clearGraph = () => { nodes.length = 0; edges.length = 0; };
+
+// BUG FIX: Smart Node Naming
 export const addNode = (x, y) => {
-    const id = String.fromCharCode(65 + nodes.length); // A, B, C...
-    nodes.push({ id, x, y, state: 'unvisited', distance: Infinity, parent: null, mstLinks: [] });
+    let newId = null;
+    
+    // Loop through A (65) to Z (90) to find the first unused letter
+    for (let i = 0; i < 26; i++) {
+        let letter = String.fromCharCode(65 + i);
+        // If this letter doesn't exist in our nodes array yet, claim it!
+        if (!nodes.find(n => n.id === letter)) {
+            newId = letter;
+            break;
+        }
+    }
+
+    // Only add if we found a valid letter (keeps us under the 26 limit automatically)
+    if (newId) {
+        nodes.push({ id: newId, x, y, state: 'unvisited', distance: Infinity, parent: null, mstLinks: [] });
+    } else {
+        alert("Maximum node limit (26) reached for this sandbox!");
+    }
 };
+
 export const addEdge = (u, v, weight) => {
     const exists = edges.find(e => (e[0] === u && e[1] === v) || (e[0] === v && e[1] === u));
     if (exists) exists[2] = weight; 
     else edges.push([u, v, weight]);
 };
+
 export const removeNode = (id) => {
-    // 1. Remove the node from the array
     const nodeIndex = nodes.findIndex(n => n.id === id);
     if (nodeIndex !== -1) {
         nodes.splice(nodeIndex, 1);
     }
     
-    // 2. Remove ANY edges that were connected to this node
-    // We loop backwards so splicing doesn't mess up our index
+    // Remove ANY edges that were connected to this node
     for (let i = edges.length - 1; i >= 0; i--) {
         if (edges[i][0] === id || edges[i][1] === id) {
             edges.splice(i, 1);
@@ -54,7 +72,11 @@ export const resetGraphData = () => {
 export const setupDropdown = () => {
     const select = document.getElementById('startNodeSelect');
     select.innerHTML = '';
-    nodes.forEach(n => {
+    
+    // Sort nodes alphabetically so dropdown looks clean even if we add 'D' later
+    const sortedNodes = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
+    
+    sortedNodes.forEach(n => {
         const opt = document.createElement('option');
         opt.value = n.id; opt.textContent = n.id;
         select.appendChild(opt);
@@ -126,17 +148,21 @@ export const drawGraph = (selectedNode = null) => {
         ctx.beginPath(); ctx.arc(node.x, node.y, 25, 0, Math.PI * 2);
         
         if (selectedNode && selectedNode.id === node.id) {
-            ctx.fillStyle = '#fff'; ctx.strokeStyle = '#e91e63'; ctx.lineWidth = 5; // Highlight selection
+            ctx.fillStyle = '#fff'; ctx.strokeStyle = '#e91e63'; ctx.lineWidth = 5; 
         } else {
             ctx.lineWidth = 3;
             if (node.state === 'unvisited') { ctx.fillStyle = '#fff'; ctx.strokeStyle = '#333'; }
             else if (node.state === 'queued') { ctx.fillStyle = '#87CEFA'; ctx.strokeStyle = '#333'; }
             else if (node.state === 'current') { ctx.fillStyle = '#FFA500'; ctx.strokeStyle = '#333'; }
             else if (node.state === 'visited') { ctx.fillStyle = '#32CD32'; ctx.strokeStyle = '#111'; }
+            else if (node.state === 'via') { ctx.fillStyle = '#9C27B0'; ctx.strokeStyle = '#fff'; }
         }
 
         ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#333'; ctx.font = 'bold 16px Arial'; ctx.fillText(node.id, node.x, node.y);
+        
+        ctx.fillStyle = (node.state === 'unvisited' || node.state === 'queued' || node.state === 'current' || (!selectedNode && node.state === 'unvisited')) ? '#333' : '#fff'; 
+        ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; 
+        ctx.fillText(node.id, node.x, node.y);
         
         if (node.distance !== Infinity && node.distance !== null) {
             ctx.fillStyle = '#e91e63'; ctx.font = 'bold 14px Arial'; ctx.fillText(`d: ${node.distance}`, node.x, node.y + 40);
