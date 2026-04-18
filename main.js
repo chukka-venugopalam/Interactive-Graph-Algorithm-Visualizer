@@ -16,9 +16,29 @@ document.getElementById('startBfsBtn').addEventListener('click', () => {
     algos.runBFS(document.getElementById('startNodeSelect').value);
 });
 
+document.getElementById('startDfsBtn').addEventListener('click', () => {
+    utils.resetGraphData(); utils.drawGraph();
+    algos.runDFS(document.getElementById('startNodeSelect').value);
+});
+
 document.getElementById('startDijkstraBtn').addEventListener('click', () => {
     utils.resetGraphData(); utils.drawGraph();
     algos.runDijkstra(document.getElementById('startNodeSelect').value);
+});
+
+document.getElementById('startFloydBtn').addEventListener('click', () => {
+    utils.resetGraphData(); utils.drawGraph();
+    algos.runFloydWarshall();
+});
+
+document.getElementById('startPrimsBtn').addEventListener('click', () => {
+    utils.resetGraphData(); utils.drawGraph();
+    algos.runPrims(document.getElementById('startNodeSelect').value);
+});
+
+document.getElementById('startKruskalBtn').addEventListener('click', () => {
+    utils.resetGraphData(); utils.drawGraph();
+    algos.runKruskal();
 });
 
 document.getElementById('resetBtn').addEventListener('click', () => {
@@ -33,31 +53,11 @@ document.getElementById('clearBtn').addEventListener('click', () => {
     utils.setupDropdown();
     utils.drawGraph();
 });
-document.getElementById('startDfsBtn').addEventListener('click', () => {
-    utils.resetGraphData(); utils.drawGraph();
-    algos.runDFS(document.getElementById('startNodeSelect').value);
-});
-
-document.getElementById('startFloydBtn').addEventListener('click', () => {
-    utils.resetGraphData(); utils.drawGraph();
-    algos.runFloydWarshall(); // Floyd doesn't need a start node
-});
-
-document.getElementById('startPrimsBtn').addEventListener('click', () => {
-    utils.resetGraphData(); utils.drawGraph();
-    algos.runPrims(document.getElementById('startNodeSelect').value);
-});
-
-document.getElementById('startKruskalBtn').addEventListener('click', () => {
-    utils.resetGraphData(); utils.drawGraph();
-    algos.runKruskal(); // Kruskal doesn't need a start node
-});
-
 
 // --- USER INPUT GRAPH EDITOR LOGIC ---
 const modeRun = document.getElementById('modeRun');
 const modeEdit = document.getElementById('modeEdit');
-const modeDelete = document.getElementById('modeDelete'); // NEW
+const modeDelete = document.getElementById('modeDelete');
 const editHint = document.getElementById('editHint');
 const canvas = document.getElementById('graphCanvas');
 
@@ -75,7 +75,7 @@ document.querySelectorAll('input[name="appMode"]').forEach(radio => {
             editHint.style.display = 'block';
         } else if (e.target.value === 'delete') {
             editHint.innerHTML = '<i>Tap any Node to delete it!</i>';
-            editHint.style.color = '#f44336'; // Red color for delete warning
+            editHint.style.color = '#f44336'; 
             editHint.style.display = 'block';
         } else {
             editHint.style.display = 'none';
@@ -84,29 +84,37 @@ document.querySelectorAll('input[name="appMode"]').forEach(radio => {
     });
 });
 
-// Canvas Click Listener
-canvas.addEventListener('mousedown', (e) => {
-    // If we are in "Run Algorithms" mode, clicks do nothing
+// PERFORMANCE FIX: Use 'pointerdown' instead of 'mousedown' for instant mobile touch support
+canvas.addEventListener('pointerdown', (e) => {
     if (modeRun.checked) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+    // Prevent screen scrolling when tapping the canvas
+    e.preventDefault();
 
-    // Check if user tapped an existing node
+    const rect = canvas.getBoundingClientRect();
+    
+    // ACCURACY FIX: Calculate the exact scale ratio between CSS size and internal Canvas size
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    // Apply the scale to the mouse/touch coordinates
+    const clickX = (e.clientX - rect.left) * scaleX;
+    const clickY = (e.clientY - rect.top) * scaleY;
+
+    // Check if user tapped an existing node (hitbox radius of 25)
     const clickedNode = utils.nodes.find(n => Math.hypot(n.x - clickX, n.y - clickY) < 25);
 
-    // --- DELETE MODE LOGIC ---
+    // --- DELETE MODE ---
     if (modeDelete.checked) {
         if (clickedNode) {
             utils.removeNode(clickedNode.id); // Vaporize the node!
             utils.setupDropdown();            // Update the dropdown menu
-            utils.drawGraph();                // Redraw the canvas instantly
+            utils.drawGraph();                // Redraw instantly
         }
-        return; // Stop here so we don't accidentally run Edit logic
+        return; 
     }
 
-    // --- EDIT MODE LOGIC ---
+    // --- EDIT MODE ---
     if (clickedNode) {
         if (!selectedNodeForEdge) {
             selectedNodeForEdge = clickedNode;
@@ -133,5 +141,8 @@ canvas.addEventListener('mousedown', (e) => {
         selectedNodeForEdge = null; 
     }
 
-    utils.drawGraph(selectedNodeForEdge);
+    // Use requestAnimationFrame for smoother high-performance drawing
+    requestAnimationFrame(() => {
+        utils.drawGraph(selectedNodeForEdge);
+    });
 });
